@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BookDetails.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Maglev-bootcamp-bookstore</a> &gt; <a href="index.source.html" class="el_package">com.cisco.dnac.model</a> &gt; <span class="el_source">BookDetails.java</span></div><h1>BookDetails.java</h1><pre class="source lang-java linenums">package com.cisco.dnac.model;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+@Document(collection = &quot;bookdetails&quot;)
+public class BookDetails {
+    @Id
+    private int id;
+    @Indexed(unique = true)
+    private String name;
+    private String author;
+    private String isbn;
+    private String genre;
+
+<span class="fc" id="L19">    private static AtomicInteger ID_GENERATOR = new AtomicInteger(1000);</span>
+
+<span class="fc" id="L21">    public BookDetails() {</span>
+<span class="fc" id="L22">    }</span>
+
+<span class="fc" id="L24">    public BookDetails(String name, String author, String isbn, String genre) {</span>
+<span class="fc" id="L25">        this.id = ID_GENERATOR.getAndIncrement();</span>
+<span class="fc" id="L26">        this.name = name;</span>
+<span class="fc" id="L27">        this.author = author;</span>
+<span class="fc" id="L28">        this.isbn = isbn;</span>
+<span class="fc" id="L29">        this.genre = genre;</span>
+<span class="fc" id="L30">    }</span>
+
+    public int getId() {
+<span class="fc" id="L33">        return id;</span>
+    }
+
+    public void setId(int id) {
+<span class="fc" id="L37">        this.id = id;</span>
+<span class="fc" id="L38">    }</span>
+
+    public String getName() {
+<span class="fc" id="L41">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L45">        this.name = name;</span>
+<span class="fc" id="L46">    }</span>
+
+    public String getAuthor() {
+<span class="fc" id="L49">        return author;</span>
+    }
+
+    public void setAuthor(String author) {
+<span class="fc" id="L53">        this.author = author;</span>
+<span class="fc" id="L54">    }</span>
+
+    public String getIsbn() {
+<span class="fc" id="L57">        return isbn;</span>
+    }
+
+    public void setIsbn(String isbn) {
+<span class="fc" id="L61">        this.isbn = isbn;</span>
+<span class="fc" id="L62">    }</span>
+
+    public String getGenre() {
+<span class="fc" id="L65">        return genre;</span>
+    }
+
+    public void setGenre(String genre) {
+<span class="fc" id="L69">        this.genre = genre;</span>
+<span class="fc" id="L70">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

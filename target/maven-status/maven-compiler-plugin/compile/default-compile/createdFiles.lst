@@ -1,0 +1,6 @@
+com/cisco/dnac/MaglevBootcampBookstoreApplication.class
+com/cisco/dnac/service/BookStoreApplicationService.class
+com/cisco/dnac/repository/BookStoreApplicationRepository.class
+com/cisco/dnac/model/BookDetails.class
+com/cisco/dnac/controller/BookStoreApplicationController.class
+com/cisco/dnac/response/BookStoreApplicationResponse.class
