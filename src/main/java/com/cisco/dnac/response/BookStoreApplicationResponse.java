@@ -7,7 +7,6 @@ import java.util.List;
 public class BookStoreApplicationResponse {
     private List<BookDetails> data;
     private String message;
-    private String status;
 
     public List<BookDetails> getData() {
         return data;
@@ -25,11 +24,4 @@ public class BookStoreApplicationResponse {
         this.message = message;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 }

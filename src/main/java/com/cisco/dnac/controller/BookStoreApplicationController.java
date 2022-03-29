@@ -5,6 +5,7 @@ import com.cisco.dnac.repository.BookStoreApplicationRepository;
 import com.cisco.dnac.response.BookStoreApplicationResponse;
 import com.cisco.dnac.service.BookStoreApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,17 +28,17 @@ public class BookStoreApplicationController {
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             path = "/book/{id}")
-    public BookStoreApplicationResponse updateBookDetails(@PathVariable int id, @RequestBody BookDetails book) {
+    public ResponseEntity updateBookDetails(@PathVariable int id, @RequestBody BookDetails book) {
         book.setId(id);
         return bookService.updateBookDetails(id,book);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             path = "/book/{id}")
-    public BookStoreApplicationResponse getBookDetailsById(@PathVariable int id) {
-        BookStoreApplicationResponse book = bookService.getBookDetailsById(id);
+    public ResponseEntity getBookDetailsById(@PathVariable int id) {
+        ResponseEntity<BookDetails> book = bookService.getBookDetailsById(id);
         if(book != null ){
-            return book;
+            return new ResponseEntity<>(book, HttpStatus.OK);
         }
         return null;
 
@@ -45,7 +46,7 @@ public class BookStoreApplicationController {
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             path = "/books")
-    public BookStoreApplicationResponse getAllBookDetails() {
+    public ResponseEntity getAllBookDetails() {
        return bookService.getAllBookDetails();
 
     }

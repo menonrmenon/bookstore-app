@@ -1,5 +1,7 @@
 package com.cisco.dnac.service;
 
+import com.cisco.dnac.exception.BookAlreadyExistsException;
+import com.cisco.dnac.exception.BookNotFoundException;
 import com.cisco.dnac.model.BookDetails;
 import com.cisco.dnac.repository.BookStoreApplicationRepository;
 import com.cisco.dnac.response.BookStoreApplicationResponse;
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.*;
 
@@ -17,38 +20,37 @@ public class BookStoreApplicationService {
     BookStoreApplicationRepository bookRepo;
 
 
-    public ResponseEntity<BookDetails> createBookDetails(BookDetails book) {
+    public ResponseEntity<BookDetails> createBookDetails(BookDetails book) throws BookAlreadyExistsException {
 
         BookDetails bookReq = new BookDetails(book.getName(),book.getAuthor(),book.getIsbn(),book.getGenre());
+
         BookDetails updatedBook = bookRepo.save(bookReq);
         return new ResponseEntity<>(updatedBook, HttpStatus.CREATED);
     }
 
-    public BookStoreApplicationResponse updateBookDetails(int id, BookDetails book) {
+    public ResponseEntity updateBookDetails(int id, BookDetails book) throws BookNotFoundException {
+        if (!bookRepo.existsById(id)) {
+            throw new BookNotFoundException();
+        }
         BookDetails updatedBook = bookRepo.save(book);
-        BookStoreApplicationResponse response = new BookStoreApplicationResponse();
-        response.setData(Arrays.asList(updatedBook));
-        response.setMessage("Success");
-        return response;
+        return new ResponseEntity<>(updatedBook, HttpStatus.CREATED);
+
     }
 
-    public BookStoreApplicationResponse getBookDetailsById(int id) {
+    public ResponseEntity getBookDetailsById(int id) throws BookNotFoundException {
         Optional<BookDetails> book = bookRepo.findById(id);
-        BookStoreApplicationResponse response = new BookStoreApplicationResponse();
-        response.setData(Arrays.asList(book.get()));
-        return response;
+        return new ResponseEntity<>(book, HttpStatus.OK);
+
     }
 
-    public BookStoreApplicationResponse getAllBookDetails() {
+    public ResponseEntity getAllBookDetails() {
         List<BookDetails> booksList = new ArrayList<>();
         booksList = bookRepo.findAll();
-        BookStoreApplicationResponse response = new BookStoreApplicationResponse();
-        response.setData(booksList);
-        response.setMessage("Success");
-        return response;
+        return new ResponseEntity<>(booksList, HttpStatus.OK);
+
     }
 
-    public BookStoreApplicationResponse deleteBookDetailsById(int id) {
+    public BookStoreApplicationResponse deleteBookDetailsById(int id) throws BookNotFoundException{
         bookRepo.deleteById(id);
         BookStoreApplicationResponse response = new BookStoreApplicationResponse();
         response.setData(new ArrayList<>());
@@ -62,5 +64,10 @@ public class BookStoreApplicationService {
         response.setData(new ArrayList<>());
         response.setMessage("All Book deleted ");
         return response;
+    }
+
+    @ExceptionHandler(value = BookAlreadyExistsException.class)
+    public ResponseEntity<String> BookAlreadyExistsException(BookAlreadyExistsException bookAlreadyExistsException) {
+        return new ResponseEntity<String>("Book already exists", HttpStatus.CONFLICT);
     }
 }

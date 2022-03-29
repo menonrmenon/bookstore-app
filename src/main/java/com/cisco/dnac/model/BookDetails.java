@@ -10,10 +10,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BookDetails {
     @Id
     private int id;
+
     @Indexed(unique = true)
     private String name;
+
     private String author;
+
+    @Indexed(unique = true)
     private String isbn;
+
     private String genre;
 
     private static AtomicInteger ID_GENERATOR = new AtomicInteger(1000);
