@@ -16,12 +16,12 @@ public class GlobalExceptionHandler {
     private String message3;
 
     @ExceptionHandler(value = BookNotFoundException.class)
-    public ResponseEntity blogNotFoundException(BookNotFoundException blogNotFoundException) {
-        return new ResponseEntity<String>(message2, HttpStatus.NOT_FOUND);
+    public ResponseEntity bookNotFoundException(BookNotFoundException bookNotFoundException) {
+        return new ResponseEntity<String>("Book Not Found", HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<Object> databaseConnectionFailsException(Exception exception) {
-        return new ResponseEntity<>(message3, HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<Object> bookAlreadyExistsException(Exception exception) {
+        return new ResponseEntity<>("Book Already Exists", HttpStatus.CONFLICT);
     }
 }

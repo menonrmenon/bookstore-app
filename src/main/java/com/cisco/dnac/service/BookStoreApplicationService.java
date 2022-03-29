@@ -5,6 +5,7 @@ import com.cisco.dnac.exception.BookNotFoundException;
 import com.cisco.dnac.model.BookDetails;
 import com.cisco.dnac.repository.BookStoreApplicationRepository;
 import com.cisco.dnac.response.BookStoreApplicationResponse;
+import com.mongodb.DuplicateKeyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +21,15 @@ public class BookStoreApplicationService {
     BookStoreApplicationRepository bookRepo;
 
 
-    public ResponseEntity<BookDetails> createBookDetails(BookDetails book) throws BookAlreadyExistsException {
+    public BookDetails createBookDetails(BookDetails book) throws DuplicateKeyException {
 
-        BookDetails bookReq = new BookDetails(book.getName(),book.getAuthor(),book.getIsbn(),book.getGenre());
+        BookDetails bookReq = new BookDetails(book.getName(), book.getAuthor(), book.getIsbn(), book.getGenre());
 
-        BookDetails updatedBook = bookRepo.save(bookReq);
-        return new ResponseEntity<>(updatedBook, HttpStatus.CREATED);
+        return bookRepo.save(bookReq);
+       // return new ResponseEntity<>(updatedBook, HttpStatus.CREATED);
     }
 
-    public ResponseEntity updateBookDetails(int id, BookDetails book) throws BookNotFoundException {
+    public ResponseEntity updateBookDetails(int id, BookDetails book) {
         if (!bookRepo.existsById(id)) {
             throw new BookNotFoundException();
         }
@@ -37,9 +38,13 @@ public class BookStoreApplicationService {
 
     }
 
-    public ResponseEntity getBookDetailsById(int id) throws BookNotFoundException {
-        Optional<BookDetails> book = bookRepo.findById(id);
-        return new ResponseEntity<>(book, HttpStatus.OK);
+    public ResponseEntity getBookDetailsById(int id) {
+        if (!bookRepo.findById(id).isPresent()) {
+            throw new BookNotFoundException();
+        } else {
+            Optional<BookDetails> book = bookRepo.findById(id);
+            return new ResponseEntity<>(book, HttpStatus.OK);
+        }
 
     }
 
@@ -50,24 +55,23 @@ public class BookStoreApplicationService {
 
     }
 
-    public BookStoreApplicationResponse deleteBookDetailsById(int id) throws BookNotFoundException{
-        bookRepo.deleteById(id);
-        BookStoreApplicationResponse response = new BookStoreApplicationResponse();
-        response.setData(new ArrayList<>());
-        response.setMessage("Book deleted with Id: " + id);
-        return response;
+    public ResponseEntity deleteBookDetailsById(int id) {
+        if (!bookRepo.findById(id).isPresent()) {
+            throw new BookNotFoundException();
+        } else {
+            bookRepo.deleteById(id);
+            return new ResponseEntity<>("Book deleted", HttpStatus.OK);
+        }
+
     }
 
-    public BookStoreApplicationResponse deleteAllBookDetails() {
+    public ResponseEntity deleteAllBookDetails() {
         bookRepo.deleteAll();
-        BookStoreApplicationResponse response = new BookStoreApplicationResponse();
-        response.setData(new ArrayList<>());
-        response.setMessage("All Book deleted ");
-        return response;
+        return new ResponseEntity<>("All Books deleted", HttpStatus.OK);
     }
 
-    @ExceptionHandler(value = BookAlreadyExistsException.class)
-    public ResponseEntity<String> BookAlreadyExistsException(BookAlreadyExistsException bookAlreadyExistsException) {
+    @ExceptionHandler(value = DuplicateKeyException.class)
+    public ResponseEntity<String> BookAlreadyExistsException(DuplicateKeyException bookAlreadyExistsException) {
         return new ResponseEntity<String>("Book already exists", HttpStatus.CONFLICT);
     }
 }

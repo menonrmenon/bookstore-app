@@ -1,5 +1,7 @@
 package com.cisco.dnac.controller;
 
+import com.cisco.dnac.exception.BookAlreadyExistsException;
+import com.cisco.dnac.exception.BookNotFoundException;
 import com.cisco.dnac.model.BookDetails;
 import com.cisco.dnac.repository.BookStoreApplicationRepository;
 import com.cisco.dnac.response.BookStoreApplicationResponse;
@@ -22,20 +24,21 @@ public class BookStoreApplicationController {
 
     @PostMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             path = "/books")
-    public ResponseEntity<BookDetails> createBookDetails(@RequestBody BookDetails book) {
-        return bookService.createBookDetails(book);
+    public ResponseEntity<BookDetails> createBookDetails(@RequestBody BookDetails book) throws BookAlreadyExistsException {
+        BookDetails updatedBook = bookService.createBookDetails(book);
+        return new ResponseEntity<>(updatedBook,HttpStatus.CREATED);
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             path = "/book/{id}")
-    public ResponseEntity updateBookDetails(@PathVariable int id, @RequestBody BookDetails book) {
+    public ResponseEntity updateBookDetails(@PathVariable int id, @RequestBody BookDetails book) throws BookNotFoundException {
         book.setId(id);
         return bookService.updateBookDetails(id,book);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE,
             path = "/book/{id}")
-    public ResponseEntity getBookDetailsById(@PathVariable int id) {
+    public ResponseEntity getBookDetailsById(@PathVariable int id) throws BookNotFoundException{
         ResponseEntity<BookDetails> book = bookService.getBookDetailsById(id);
         if(book != null ){
             return new ResponseEntity<>(book, HttpStatus.OK);
@@ -52,13 +55,13 @@ public class BookStoreApplicationController {
     }
 
     @DeleteMapping(path = "/book/{id}")
-    public BookStoreApplicationResponse deleteBookDetailsById(@PathVariable int id) {
+    public ResponseEntity deleteBookDetailsById(@PathVariable int id) throws BookNotFoundException{
        return bookService.deleteBookDetailsById(id);
 
     }
 
     @DeleteMapping(path = "/books")
-    public BookStoreApplicationResponse deleteAllBookDetails() {
+    public ResponseEntity deleteAllBookDetails() {
        return bookService.deleteAllBookDetails();
 
     }
@@ -69,5 +72,10 @@ public class BookStoreApplicationController {
     @GetMapping(path = "/live")
     public String live() {
         return "Live!";
+    }
+
+    @ExceptionHandler(value = BookAlreadyExistsException.class)
+    public ResponseEntity<String> BookAlreadyExistsException(BookAlreadyExistsException bookAlreadyExistsException) {
+        return new ResponseEntity<String>("Book already exists", HttpStatus.CONFLICT);
     }
 }
