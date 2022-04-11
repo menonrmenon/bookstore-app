@@ -6,6 +6,7 @@ import com.cisco.dnac.model.BookDetails;
 import com.cisco.dnac.repository.BookStoreApplicationRepository;
 import com.cisco.dnac.response.BookStoreApplicationResponse;
 import com.mongodb.DuplicateKeyException;
+import io.micrometer.core.instrument.Metrics;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,7 @@ public class BookStoreApplicationService {
             throw new BookNotFoundException();
         } else {
             bookRepo.deleteById(id);
+            Metrics.gauge("Total number of books in the store: ", bookRepo.findAll().size());
             return new ResponseEntity<>("Book deleted", HttpStatus.OK);
         }
 
@@ -67,6 +69,7 @@ public class BookStoreApplicationService {
 
     public ResponseEntity deleteAllBookDetails() {
         bookRepo.deleteAll();
+        Metrics.gauge("Total number of books in the store: ", bookRepo.findAll().size());
         return new ResponseEntity<>("All Books deleted", HttpStatus.OK);
     }
 

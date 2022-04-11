@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: actuator-monitor
+  labels:
+    app: {{ include "helm-charts.name" . }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "helm-charts.name" . }}
+  endpoints:
+    - port: http
+      path: '/actuator/prometheus'
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - default
